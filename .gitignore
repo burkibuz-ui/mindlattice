@@ -18,3 +18,4 @@ dist/
 
 # Pyodide runtime (copied from node_modules by scripts/copy-pyodide.mjs)
 frontend/public/pyodide/
+*.tsbuildinfo
