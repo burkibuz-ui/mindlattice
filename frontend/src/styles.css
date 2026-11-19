@@ -180,3 +180,16 @@ td.root { color: var(--warn-ink); }
 .pill--practicing { background: var(--accent-soft); color: var(--accent-ink); }
 .pill--on_track { background: var(--good-soft); color: var(--good-ink); }
 .pill--no_data { background: var(--ground); color: var(--muted); }
+
+/* code runner */
+.button-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.button-row .button { align-self: auto; }
+.run-output { border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.run-output--bad { background: #fff7f2; border-color: #f3c9b1; color: #7c2d12; line-height: 1.5; }
+.run-output-header { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.run-badge { padding: 3px 10px; border-radius: 999px; font-size: 12px; }
+.run-badge--good { background: var(--good-soft); color: var(--good-ink); }
+.run-badge--bad { background: var(--warn-soft); color: var(--warn-ink); }
+.run-stdout, .run-error { margin: 0; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 14px; line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
+.run-empty { color: var(--muted); }
+.run-error { color: var(--warn-ink); background: var(--warn-soft); border-radius: 8px; padding: 10px; }

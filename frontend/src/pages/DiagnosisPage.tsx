@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { api } from "../api";
 import { DiagnosisCard } from "../components/DiagnosisCard";
+import { RunOutput } from "../components/RunOutput";
+import { usePythonRunner, type RunOutcome } from "../runner/usePythonRunner";
 import { useStudent } from "../student";
 import type { AttemptResult, Problem } from "../types";
 
@@ -12,6 +14,8 @@ export function DiagnosisPage() {
   const [result, setResult] = useState<AttemptResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const runner = usePythonRunner();
+  const [runOutcome, setRunOutcome] = useState<RunOutcome | null>(null);
 
   useEffect(() => {
     api.problems()
@@ -26,6 +30,12 @@ export function DiagnosisPage() {
     setProblemId(problem.id);
     setCode(problem.starter_code);
     setResult(null);
+    setRunOutcome(null);
+  }
+
+  async function runCode() {
+    if (runner.status !== "ready" || !code.trim()) return;
+    setRunOutcome(await runner.run(code));
   }
 
   async function submit() {
@@ -48,8 +58,8 @@ export function DiagnosisPage() {
       <header className="page-header">
         <p className="eyebrow">Python basics</p>
         <h1>Why are you stuck?</h1>
-        <p className="muted">Solve a task. MindLattice reads your code (it never runs it), finds the misconception
-          and traces it back through the knowledge graph.</p>
+        <p className="muted">Solve a task and run it right here in your browser. When something is off,
+          MindLattice finds the misconception behind it and traces it back through the knowledge graph.</p>
       </header>
 
       <div className="grid-2">
@@ -71,7 +81,10 @@ export function DiagnosisPage() {
           <textarea id="code" className="code-input" spellCheck={false} value={code} rows={10}
             onChange={(e) => setCode(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Tab") {
+              if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault();
+                runCode();
+              } else if (e.key === "Tab") {
                 e.preventDefault();
                 const el = e.currentTarget;
                 const { selectionStart: start, selectionEnd: end } = el;
@@ -79,9 +92,19 @@ export function DiagnosisPage() {
                 requestAnimationFrame(() => el.setSelectionRange(start + 4, start + 4));
               }
             }} />
-          <button className="button" onClick={submit} disabled={busy || !current || !code.trim()}>
-            {busy ? "Analysing…" : "Check my code"}
-          </button>
+          <div className="button-row">
+            <button className="button button--ghost" onClick={runCode}
+              disabled={runner.status !== "ready" || !code.trim()}>
+              {runner.status === "loading" ? "Loading Python…" : runner.status === "running" ? "Running…" : "Run"}
+            </button>
+            <button className="button" onClick={submit} disabled={busy || !current || !code.trim()}>
+              {busy ? "Analysing…" : "Check my code"}
+            </button>
+          </div>
+          <p className="muted small">Run executes your code in this browser (Ctrl/Cmd + Enter).
+            Check my code finds the misconception behind a mistake.</p>
+          {runner.status === "failed" && <p className="error">Python could not start: {runner.loadError}</p>}
+          {runOutcome && problem && <RunOutput outcome={runOutcome} expected={problem.expected_output} />}
           {!current && <p className="muted small">Pick or add a student in the menu first.</p>}
           {error && <p className="error">{error}</p>}
         </section>

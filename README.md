@@ -19,6 +19,10 @@ Student code ──► misconception ──► knowledge graph ──► root ca
 - **Static code analysis** with Python's `ast` module. Student code is parsed, **never executed**.
   Rules detect overwritten accumulators, `=` vs `==`, exclusive `range` stops, off-by-one indexing,
   infinite `while` loops, `print` inside a loop, and `return` inside a loop.
+- **Run code in the browser** with [Pyodide](https://pyodide.org) (CPython compiled to WebAssembly)
+  inside a Web Worker. Output is compared with the expected result; code that runs longer than
+  5 seconds (e.g. an infinite `while` loop) is stopped by terminating the worker. The server never
+  executes student code.
 - **Knowledge graph** of 18 Python-basics concepts with prerequisite edges (validated acyclic).
 - **Student model**: one mastery score per concept, updated with an exponential moving average.
   The update rate reflects how strong the evidence is (a pinpointed misconception counts more than
@@ -36,6 +40,7 @@ Student code ──► misconception ──► knowledge graph ──► root ca
 ```mermaid
 flowchart LR
   UI[React + TypeScript<br/>Vite] -->|REST /api| API[FastAPI routers]
+  UI -->|postMessage| W[Web Worker<br/>Pyodide]
   API --> T[tutor service<br/>use cases]
   T --> LLM[LLMProvider<br/>MockLLM → code_analysis]
   T --> D[diagnosis]
@@ -78,6 +83,9 @@ cd frontend
 npm install
 npm run dev
 ```
+
+`npm run dev` and `npm run build` first copy the Pyodide runtime from `node_modules` into
+`public/pyodide` (see `frontend/scripts/copy-pyodide.mjs`), so the app works without a CDN.
 
 On first start the database is created and seeded with the concept graph, five coding tasks,
 27 micro exercises and a demo class of eight students (set `SEED_DEMO_DATA=false` to skip it).

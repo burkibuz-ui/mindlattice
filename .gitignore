@@ -15,3 +15,6 @@ dist/
 .DS_Store
 .vscode/
 .idea/
+
+# Pyodide runtime (copied from node_modules by scripts/copy-pyodide.mjs)
+frontend/public/pyodide/
