@@ -137,6 +137,31 @@ h2 { font-size: 17px; }
 }
 .cta .button { align-self: auto; }
 
+/* learning path */
+.path { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; }
+.path-step { display: grid; grid-template-columns: 32px 1fr; gap: 14px; }
+.path-rail { display: flex; flex-direction: column; align-items: center; }
+.path-dot {
+  width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; flex: none;
+  font-size: 14px; font-weight: 700; background: var(--ground); color: var(--ink-soft); border: 2px solid var(--line);
+}
+.path-step--weak .path-dot { background: var(--warn-soft); color: var(--warn-ink); border-color: var(--warn); }
+.path-step--practicing .path-dot { background: var(--accent-soft); color: var(--accent-ink); border-color: #8fa8ff; }
+.path-step--mastered .path-dot { background: var(--good-soft); color: var(--good-ink); border-color: var(--good-ink); }
+.path-line { flex: 1; width: 2px; min-height: 16px; background: var(--line); }
+.path-body {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 4px 0 20px;
+}
+.path-step:last-child .path-body { padding-bottom: 0; }
+.path-info { display: flex; flex-direction: column; gap: 4px; min-width: 200px; flex: 1; }
+.path-title { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-weight: 600; }
+.path-tag { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--ground); color: var(--muted); }
+.path-tag--root { background: var(--warn-soft); color: var(--warn-ink); }
+.path-tag--target { background: var(--accent-soft); color: var(--accent-ink); }
+.path-meta { font-size: 13px; color: var(--ink-soft); }
+.path-body .button { align-self: auto; min-height: 38px; padding: 0 14px; font-size: 14px; }
+
 /* practice */
 .progress { display: flex; gap: 8px; }
 .progress-step { flex: 1; height: 8px; border-radius: 99px; background: #dde1ea; }

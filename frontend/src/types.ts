@@ -95,3 +95,22 @@ export interface ClassOverview {
   students: StudentRow[];
   root_causes: { id: string; name: string; count: number }[];
 }
+
+export type PathStatus = "weak" | "untested" | "practicing" | "mastered";
+
+export interface PathStep {
+  concept_id: string;
+  name: string;
+  status: PathStatus;
+  score: number | null;
+  exercises_needed: number;
+  is_root_cause: boolean;
+  is_target: boolean;
+}
+
+export interface LearningPath {
+  target: { id: string; name: string };
+  root_cause: { id: string; name: string };
+  total_exercises: number;
+  steps: PathStep[];
+}

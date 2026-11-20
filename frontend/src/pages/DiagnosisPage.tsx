@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../api";
 import { DiagnosisCard } from "../components/DiagnosisCard";
+import { LearningPathCard } from "../components/LearningPathCard";
 import { RunOutput } from "../components/RunOutput";
 import { usePythonRunner, type RunOutcome } from "../runner/usePythonRunner";
 import { useStudent } from "../student";
@@ -127,7 +128,12 @@ export function DiagnosisPage() {
         </section>
       </div>
 
-      {result && !result.passed && <DiagnosisCard diagnosis={result.diagnosis} />}
+      {result && !result.passed && current && (
+        <>
+          <DiagnosisCard diagnosis={result.diagnosis} />
+          <LearningPathCard key={result.attempt_id} studentId={current.id} targetId={result.diagnosis.target.id} />
+        </>
+      )}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import type {
-  AnswerResult, AttemptResult, ClassOverview, Diagnosis, Exercise, MasteryRow, Problem, Student,
+  AnswerResult, AttemptResult, ClassOverview, Diagnosis, Exercise, LearningPath, MasteryRow, Problem,
+  Student,
 } from "./types";
 
 const BASE = import.meta.env.VITE_API_URL ?? "";
@@ -40,6 +41,8 @@ export const api = {
     post<AttemptResult>(`/api/students/${studentId}/attempts`, { problem_id: problemId, code }),
   diagnosis: (studentId: number, conceptId: string) =>
     request<Diagnosis>(`/api/students/${studentId}/diagnosis/${conceptId}`),
+  learningPath: (studentId: number, conceptId: string) =>
+    request<LearningPath>(`/api/students/${studentId}/learning-path/${conceptId}`),
   practice: (studentId: number, conceptId: string) =>
     post<Exercise[]>(`/api/students/${studentId}/practice`, { concept_id: conceptId }),
   answer: (studentId: number, exerciseId: number, answer: string) =>
