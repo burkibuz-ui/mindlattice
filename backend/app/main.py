@@ -21,7 +21,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or get_settings()
     engine = make_engine(settings.database_url)
     session_factory = make_session_factory(engine)
-    llm = get_llm(settings.llm_provider)
+    llm = get_llm(settings.llm_provider, api_key=settings.anthropic_api_key,
+                  model=settings.anthropic_model)
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
