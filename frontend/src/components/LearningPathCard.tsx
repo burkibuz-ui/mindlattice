@@ -15,16 +15,13 @@ const STATUS_TEXT: Record<PathStep["status"], string> = {
   mastered: "Mastered",
 };
 
-function describe(step: PathStep): string {
-  const parts = [STATUS_TEXT[step.status]];
-  if (step.score !== null) parts.push(`${Math.round(step.score * 100)}% mastery`);
-  if (step.exercises_needed > 0) {
-    parts.push(`about ${step.exercises_needed} correct exercise${step.exercises_needed === 1 ? "" : "s"} to master`);
-  }
-  return parts.join(" · ");
+function describe(step: PathStep) {
+  let text = STATUS_TEXT[step.status];
+  if (step.score !== null) text += ` · ${Math.round(step.score * 100)}%`;
+  if (step.exercises_needed > 0) text += ` · ~${step.exercises_needed} exercises`;
+  return text;
 }
 
-/** Ordered study plan from the root cause up to the target concept. */
 export function LearningPathCard({ studentId, targetId }: Props) {
   const [path, setPath] = useState<LearningPath | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -48,8 +45,7 @@ export function LearningPathCard({ studentId, targetId }: Props) {
           <span className="badge badge--low">≈ {path.total_exercises} exercises to {path.target.name}</span>
         )}
       </div>
-      <p className="muted">Work through these in order. Each step builds on the one before it, so fixing the
-        root cause first makes everything above it easier.</p>
+      <p className="muted">Go in this order, start with the root cause.</p>
 
       <ol className="path" aria-label="Learning path">
         {path.steps.map((step, index) => (

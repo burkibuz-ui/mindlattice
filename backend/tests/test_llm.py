@@ -25,8 +25,8 @@ def claude_with(handler) -> tuple[ClaudeLLM, list[httpx.Request]]:
 
 def test_explanation_comes_from_the_messages_api():
     llm, seen = claude_with(lambda _: httpx.Response(200, json={
-        "content": [{"type": "text", "text": "  Your loop is fine; the running total gets replaced.  "}]}))
-    assert llm.explain_diagnosis(*ARGS) == "Your loop is fine; the running total gets replaced."
+        "content": [{"type": "text", "text": "  You keep overwriting total.  "}]}))
+    assert llm.explain_diagnosis(*ARGS) == "You keep overwriting total."
 
     request = seen[0]
     assert str(request.url) == ANTHROPIC_URL

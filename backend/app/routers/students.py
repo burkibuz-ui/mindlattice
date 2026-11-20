@@ -71,7 +71,6 @@ def get_diagnosis(student_id: int, concept_id: str, db: Session = Depends(get_db
 
 @router.get("/{student_id}/learning-path/{concept_id}", response_model=LearningPathOut)
 def get_learning_path(student_id: int, concept_id: str, db: Session = Depends(get_db)):
-    """Concepts to study before `concept_id`, prerequisites first, with an effort estimate."""
     return tutor.learning_path_report(db, student_id, concept_id)
 
 
