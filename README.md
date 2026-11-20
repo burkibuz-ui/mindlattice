@@ -1,5 +1,7 @@
 # MindLattice
 
+[![CI](https://github.com/burkibuz-ui/mindlattice/actions/workflows/ci.yml/badge.svg)](https://github.com/burkibuz-ui/mindlattice/actions/workflows/ci.yml)
+
 **Find out *why* a student can't learn a topic, not just *that* they can't.**
 
 When a student keeps failing at `for` loops, the problem is often somewhere else: they may not
