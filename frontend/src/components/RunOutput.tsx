@@ -7,7 +7,7 @@ interface Props {
 
 const normalize = (text: string) => text.split("\n").map((line) => line.trimEnd()).join("\n").trim();
 
-/** Tasks like "evens([1, 2, 3, 4]) -> [2, 4]" describe behaviour, they are not printed output. */
+// "evens([1, 2, 3, 4]) -> [2, 4]" style tasks are not printed output, skip the compare
 const isPrintedOutput = (expected: string) => expected.trim() !== "" && !expected.includes("->");
 
 export function RunOutput({ outcome, expected }: Props) {

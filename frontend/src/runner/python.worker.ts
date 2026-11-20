@@ -1,7 +1,6 @@
 /// <reference lib="webworker" />
-// Runs student code with Pyodide (CPython compiled to WebAssembly) inside a Web Worker.
-// The worker keeps the page responsive, and the page can terminate it if the code never
-// finishes (e.g. an infinite while loop). Nothing is ever sent to the server.
+// runs student code with pyodide in a worker so the page doesn't freeze
+// and we can kill it on infinite loops. code never goes to the server
 
 import type { PyodideAPI } from "pyodide";
 import type { RunRequest, WorkerMessage } from "./protocol";
@@ -25,7 +24,7 @@ function collect(line: string) {
   outputLength += line.length + 1;
 }
 
-/** Keep only the part of the traceback that points at the student's code. */
+// only keep the traceback lines from the student's code
 function cleanTraceback(message: string): string {
   const lines = message.trimEnd().split("\n");
   const start = lines.findIndex((line) => line.includes('File "<exec>"'));
@@ -59,7 +58,7 @@ scope.onmessage = async (event: MessageEvent<RunRequest>) => {
   outputLength = 0;
   truncated = false;
 
-  // A fresh namespace for every run, so variables from the previous run don't leak in.
+  // new namespace every run, otherwise old variables leak in
   const globals = pyodide.globals.get("dict")();
   let error: string | null = null;
   try {

@@ -7,7 +7,6 @@ interface Props {
   targetId: string;
 }
 
-/** The prerequisite chain from the root cause (left) up to the target concept (right). */
 export function ChainView({ chain, rootId, targetId }: Props) {
   return (
     <ol className="chain" aria-label="Knowledge chain from root cause to target">

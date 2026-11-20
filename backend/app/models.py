@@ -1,8 +1,4 @@
-"""SQLAlchemy ORM models.
-
-The knowledge graph is stored as two tables: `concepts` (nodes) and
-`concept_dependencies` (edges, "prerequisite -> concept").
-"""
+# graph is stored as concepts (nodes) + concept_dependencies (edges: prerequisite -> concept)
 
 from datetime import datetime, timezone
 
@@ -25,7 +21,7 @@ class Concept(Base):
 
 
 class ConceptDependency(Base):
-    """Edge in the knowledge graph: `prerequisite_id` must be learned before `concept_id`."""
+    # edge in the knowledge graph: `prerequisite_id` must be learned before `concept_id`
 
     __tablename__ = "concept_dependencies"
 
@@ -34,7 +30,7 @@ class ConceptDependency(Base):
 
 
 class Problem(Base):
-    """A coding task. Students submit code for it; the code is analysed, never executed."""
+    # coding task. code gets analysed, never executed
 
     __tablename__ = "problems"
 
@@ -45,14 +41,14 @@ class Problem(Base):
     concept_id: Mapped[str] = mapped_column(ForeignKey("concepts.id"))
     starter_code: Mapped[str] = mapped_column(Text, default="")
     expected_output: Mapped[str] = mapped_column(Text, default="")
-    # Hints for the static analyser.
+    # hints for the analyser
     required_construct: Mapped[str | None] = mapped_column(String(16), nullable=True)  # "for" | "while" | "def"
     range_stop: Mapped[int | None] = mapped_column(Integer, nullable=True)
     single_output: Mapped[bool] = mapped_column(Boolean, default=False)
 
 
 class Exercise(Base):
-    """A short multiple-choice micro exercise that targets one concept."""
+    # multiple choice micro exercise for one concept
 
     __tablename__ = "exercises"
 
@@ -78,7 +74,7 @@ class Student(Base):
 
 
 class Mastery(Base):
-    """How well a student knows a concept: a score in [0, 1] plus how much evidence we have."""
+    # how well a student knows a concept: a score in [0, 1] plus how much evidence we have
 
     __tablename__ = "mastery"
 
@@ -92,7 +88,7 @@ class Mastery(Base):
 
 
 class Attempt(Base):
-    """One code submission and what the analyser found in it."""
+    # one code submission and what the analyser found in it
 
     __tablename__ = "attempts"
 

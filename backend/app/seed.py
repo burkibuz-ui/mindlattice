@@ -1,5 +1,3 @@
-"""Load the static content into an empty database (and optionally a demo class)."""
-
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -29,7 +27,7 @@ def validate_content() -> None:
 
 
 def seed_content(db: Session) -> bool:
-    """Insert concepts, edges, problems and exercises. Returns False if already seeded."""
+    # insert concepts, edges, problems and exercises. Returns False if already seeded
     if db.scalars(select(Concept.id).limit(1)).first() is not None:
         return False
     validate_content()

@@ -16,11 +16,8 @@ function createWorker() {
   return new Worker(new URL("./python.worker.ts", import.meta.url), { type: "module" });
 }
 
-/**
- * Owns the Python worker. `run(code)` resolves with the program's output.
- * If the code runs longer than RUN_TIMEOUT_MS the worker is killed and a new one
- * is started; that is the only reliable way to stop an infinite loop.
- */
+// killing the worker after RUN_TIMEOUT_MS is the only way to stop an infinite loop,
+// so on timeout we terminate it and start a new one
 export function usePythonRunner() {
   const workerRef = useRef<Worker | null>(null);
   const pendingRef = useRef<{ id: number; resolve: (o: RunOutcome) => void; timer: number } | null>(null);

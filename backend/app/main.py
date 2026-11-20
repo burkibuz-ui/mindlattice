@@ -1,7 +1,4 @@
-"""FastAPI application factory.
-
-Run locally:  uvicorn app.main:app --reload
-"""
+# run: uvicorn app.main:app --reload
 
 from contextlib import asynccontextmanager
 

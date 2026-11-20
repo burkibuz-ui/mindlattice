@@ -1,10 +1,4 @@
-"""Static analysis of student code with Python's `ast` module.
-
-The code is parsed, never executed. Each rule looks for a pattern that
-reveals a specific misconception and pins it on one concept of the
-knowledge graph. This is the rule-based "mock LLM"; a real LLM provider can
-find subtler mistakes, but must return the same `Finding` shape.
-"""
+# finds misconceptions with ast. student code is only parsed, never run
 
 import ast
 import re
@@ -53,7 +47,7 @@ def analyze(code: str, spec: ProblemSpec) -> list[Finding]:
     return sorted(findings, key=lambda f: (f.line or 0, f.rule))
 
 
-# --- rules -----------------------------------------------------------------
+# rules
 
 
 def _syntax_finding(code: str, error: SyntaxError, spec: ProblemSpec) -> Finding:
@@ -82,7 +76,7 @@ def _missing_construct(tree: ast.AST, spec: ProblemSpec) -> list[Finding]:
 
 
 def _overwritten_accumulator(tree: ast.AST) -> list[Finding]:
-    """`total = n` directly inside a loop, where `total` was initialised before the loop."""
+    # `total = n` directly inside a loop, where `total` was initialised before the loop
     findings = []
     for loop in (node for node in ast.walk(tree) if isinstance(node, _LOOPS)):
         initialised = _names_assigned_before(tree, loop.lineno)
@@ -166,7 +160,7 @@ def _print_inside_loop(tree: ast.AST, spec: ProblemSpec) -> list[Finding]:
 
 
 def _return_inside_loop(tree: ast.AST) -> list[Finding]:
-    """A function that can only return from inside a loop stops on the first match."""
+    # function that only returns inside a loop stops at the first match
     findings = []
     for function in (node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)):
         loops = [node for node in function.body if isinstance(node, _LOOPS)]
@@ -183,7 +177,7 @@ def _return_inside_loop(tree: ast.AST) -> list[Finding]:
     return findings
 
 
-# --- helpers ---------------------------------------------------------------
+# helpers
 
 
 def _names_in(node: ast.AST) -> set[str]:
@@ -191,7 +185,7 @@ def _names_in(node: ast.AST) -> set[str]:
 
 
 def _walk_body(statements: list[ast.stmt]):
-    """Walk statements without descending into nested function or class definitions."""
+    # walk statements without descending into nested function or class definitions
     stack = list(statements)
     while stack:
         node = stack.pop()

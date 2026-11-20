@@ -1,5 +1,3 @@
-"""Database engine, session factory and the declarative base."""
-
 from collections.abc import Iterator
 
 from fastapi import Request
@@ -27,7 +25,7 @@ def make_session_factory(engine: Engine) -> sessionmaker[Session]:
 
 
 def get_db(request: Request) -> Iterator[Session]:
-    """FastAPI dependency: one session per request."""
+    # fastAPI dependency: one session per request
     session_factory: sessionmaker[Session] = request.app.state.session_factory
     db = session_factory()
     try:

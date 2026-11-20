@@ -1,4 +1,4 @@
-// Messages exchanged between the page and the Python worker.
+// page <-> worker messages
 
 export interface RunRequest {
   id: number;

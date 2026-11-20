@@ -1,5 +1,3 @@
-"""Student-facing endpoints: attempts, diagnosis and micro exercises."""
-
 from fastapi import APIRouter, Depends, Request, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session

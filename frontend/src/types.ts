@@ -1,4 +1,4 @@
-// Mirrors the backend's Pydantic schemas (backend/app/schemas.py).
+// same shapes as backend/app/schemas.py
 
 export interface Student {
   id: number;

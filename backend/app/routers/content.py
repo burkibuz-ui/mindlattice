@@ -1,5 +1,3 @@
-"""Read-only content: the concept graph and the coding problems."""
-
 from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.orm import Session

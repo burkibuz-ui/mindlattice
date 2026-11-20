@@ -1,7 +1,4 @@
-"""Use cases that tie the graph, the student model, the diagnosis and the LLM together.
-
-Routers stay thin and call these functions; tests can call them directly.
-"""
+# use cases. routers call these, tests can call them directly
 
 from collections import Counter
 from dataclasses import dataclass
@@ -47,7 +44,7 @@ def spec_for(problem: Problem) -> ProblemSpec:
                        range_stop=problem.range_stop, single_output=problem.single_output)
 
 
-# --- code attempts -----------------------------------------------------------
+# code attempts
 
 
 @dataclass
@@ -86,7 +83,7 @@ def submit_attempt(db: Session, llm: LLMProvider, student_id: int, problem_id: s
     return AttemptResult(attempt, findings, changes)
 
 
-# --- diagnosis ---------------------------------------------------------------
+# diagnosis
 
 
 def _states(db: Session, student_id: int) -> dict[str, ConceptState]:
@@ -156,7 +153,7 @@ def learning_path_report(db: Session, student_id: int, target_id: str) -> dict:
     }
 
 
-# --- micro exercises ---------------------------------------------------------
+# micro exercises
 
 
 def practice_set(db: Session, llm: LLMProvider, student_id: int, concept_id: str) -> list[Exercise]:
@@ -179,7 +176,7 @@ def answer_exercise(db: Session, student_id: int, exercise_id: int, answer: str)
             "concept_id": exercise.concept_id, "old_score": change.old, "new_score": change.new}
 
 
-# --- teacher view ------------------------------------------------------------
+# teacher view
 
 
 def student_status(diagnosis: Diagnosis, root_score: float | None) -> str:

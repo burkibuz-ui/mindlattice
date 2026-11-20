@@ -1,12 +1,4 @@
-"""LLM provider interface.
-
-Everything "intelligent" goes through `LLMProvider`, so the rest of the app
-does not care whether answers come from a real model or from rules.
-
-`MockLLM` needs no API key: it uses the static analyser for code and picks
-exercises from the curated bank. To add a real provider, implement the same
-three methods and register it in `get_llm()`.
-"""
+# everything "smart" goes through LLMProvider, so mock and real models are swappable
 
 import logging
 from typing import Protocol

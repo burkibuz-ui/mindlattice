@@ -1,9 +1,3 @@
-"""Static content: the Python-basics knowledge graph, coding problems and micro exercises.
-
-Each concept lists its *direct* prerequisites. The graph must be acyclic
-(validated in tests and at seed time).
-"""
-
 CONCEPTS: list[dict] = [
     {"id": "variables-assignment", "name": "Variables & assignment", "prerequisites": [],
      "description": "Storing a value under a name with `=`; the name points to the latest value."},

@@ -1,8 +1,4 @@
-"""In-memory view of the knowledge graph.
-
-Edges point from a prerequisite to the concept that depends on it:
-    variable-update  ->  loop-logic  ->  for-loops
-"""
+# edges go prerequisite -> concept, e.g. variable-update -> loop-logic -> for-loops
 
 from collections import deque
 from collections.abc import Iterable
@@ -14,7 +10,7 @@ class CycleError(ValueError):
 
 class ConceptGraph:
     def __init__(self, concept_ids: Iterable[str], edges: Iterable[tuple[str, str]]):
-        """`edges` are (concept_id, prerequisite_id) pairs."""
+        # `edges` are (concept_id, prerequisite_id) pairs
         self.concept_ids: list[str] = list(concept_ids)
         known = set(self.concept_ids)
         self._prereqs: dict[str, list[str]] = {cid: [] for cid in self.concept_ids}
@@ -35,7 +31,7 @@ class ConceptGraph:
         return list(self._dependents[concept_id])
 
     def ancestors(self, concept_id: str) -> dict[str, int]:
-        """All direct and indirect prerequisites, mapped to their distance from `concept_id`."""
+        # every prerequisite (direct or not) -> distance from concept_id
         depth: dict[str, int] = {}
         queue = deque([(concept_id, 0)])
         while queue:
@@ -47,7 +43,7 @@ class ConceptGraph:
         return depth
 
     def path(self, start: str, goal: str) -> list[str]:
-        """Shortest prerequisite chain from `start` up to `goal` (inclusive), or [] if none."""
+        # shortest chain start -> ... -> goal, [] if there is none
         if start == goal:
             return [start]
         previous: dict[str, str] = {}
@@ -69,7 +65,7 @@ class ConceptGraph:
         return []
 
     def topological_order(self) -> list[str]:
-        """Concepts ordered so every prerequisite comes first. Raises CycleError on cycles."""
+        # prerequisites first, raises CycleError if there is a cycle
         indegree = {cid: len(self._prereqs[cid]) for cid in self.concept_ids}
         queue = deque(cid for cid in self.concept_ids if indegree[cid] == 0)
         order: list[str] = []

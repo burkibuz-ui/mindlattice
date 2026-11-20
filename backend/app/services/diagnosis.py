@@ -1,15 +1,6 @@
-"""Root-cause diagnosis over the knowledge graph.
-
-Idea: when a student fails concept X, look at X and all of its (direct and
-indirect) prerequisites. Among the weak ones, the root cause is the most
-*fundamental* weak concept: one whose own prerequisites are all fine. Fixing
-it first is what unblocks everything above it.
-
-Ties are broken by a "suspicion" score combining how weak the concept is,
-how often the analyser pinned a misconception on it, and how deep it sits.
-Prerequisites with no evidence at all are returned as `probe_concepts`:
-asking one quick question about them makes the next diagnosis sharper.
-"""
+# root cause = the most basic weak concept whose own prerequisites are ok.
+# ties: how weak + how often a misconception hit it + how deep it is.
+# untested prerequisites come back as probe_concepts
 
 from collections import Counter
 from dataclasses import dataclass, field

@@ -2,7 +2,6 @@ interface Props {
   score: number | null;
 }
 
-/** Mastery score in [0, 1] as a bar; `null` means "no evidence yet". */
 export function ScoreBar({ score }: Props) {
   if (score === null) {
     return <span className="score-unknown">Mastery: not tested yet</span>;

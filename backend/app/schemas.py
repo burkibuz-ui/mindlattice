@@ -1,5 +1,3 @@
-"""Request and response bodies (Pydantic)."""
-
 from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -111,7 +109,7 @@ class LearningPathOut(BaseModel):
 
 
 class ExerciseOut(ORM):
-    """Sent to the student: no answer, no explanation."""
+    # sent to the student: no answer, no explanation
 
     id: int
     concept_id: str

@@ -1,13 +1,6 @@
-"""Student model: one mastery score in [0, 1] per concept.
-
-The update rule is an exponential moving average towards the observed outcome:
-
-    new = old + rate * (outcome - old)
-
-`rate` expresses how strong the evidence is. A detected misconception is
-strong, direct evidence against one concept; a plain wrong answer is weaker
-evidence, because we don't yet know *why* it was wrong.
-"""
+# mastery score per concept, 0..1
+# update: new = old + rate * (outcome - old)
+# rate = how much we trust the evidence (misconception > plain wrong answer)
 
 from dataclasses import dataclass
 
@@ -48,7 +41,7 @@ def get_scores(db: Session, student_id: int) -> dict[str, Mastery]:
 
 
 def apply_evidence(db: Session, student_id: int, concept_id: str, outcome: float, rate: float) -> ScoreChange:
-    """Update (or create) a mastery row. The caller commits."""
+    # update (or create) a mastery row. The caller commits
     row = db.get(Mastery, (student_id, concept_id))
     if row is None:
         row = Mastery(student_id=student_id, concept_id=concept_id, score=PRIOR, evidence_count=0)
