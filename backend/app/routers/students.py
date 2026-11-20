@@ -8,7 +8,7 @@ from ..database import get_db
 from ..models import Problem, Student
 from ..schemas import (
     AnswerCreate, AnswerResultOut, AttemptCreate, AttemptResultOut, DiagnosisOut, ExerciseOut,
-    MasteryOut, PracticeRequest, ScoreChangeOut, StudentCreate, StudentOut,
+    LearningPathOut, MasteryOut, PracticeRequest, ScoreChangeOut, StudentCreate, StudentOut,
 )
 from ..services import mastery, tutor
 from ..services.llm import LLMProvider
@@ -67,6 +67,12 @@ def submit_attempt(student_id: int, body: AttemptCreate, db: Session = Depends(g
 def get_diagnosis(student_id: int, concept_id: str, db: Session = Depends(get_db),
                   llm: LLMProvider = Depends(get_llm)):
     return tutor.diagnosis_report(db, llm, student_id, concept_id)
+
+
+@router.get("/{student_id}/learning-path/{concept_id}", response_model=LearningPathOut)
+def get_learning_path(student_id: int, concept_id: str, db: Session = Depends(get_db)):
+    """Concepts to study before `concept_id`, prerequisites first, with an effort estimate."""
+    return tutor.learning_path_report(db, student_id, concept_id)
 
 
 @router.post("/{student_id}/practice", response_model=list[ExerciseOut])

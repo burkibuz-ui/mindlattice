@@ -30,6 +30,9 @@ Student code ──► misconception ──► knowledge graph ──► root ca
 - **Root-cause diagnosis**: among the weak concepts under the target, pick the most fundamental one
   whose own prerequisites are fine; break ties by misconception frequency. Returns a confidence
   level and "probe" concepts that have no evidence yet.
+- **Personalised learning path**: every concept the target depends on that isn't solid yet, in
+  prerequisite order, with an estimate of how many correct exercises each one needs. The estimate is
+  derived in closed form from the mastery update rule (see `services/learning_path.py`).
 - **Micro exercises** chosen for the root cause; answers update mastery and the diagnosis.
 - **Teacher dashboard**: most common root causes in the class, with per-student status.
 - **Pluggable LLM layer**: everything "intelligent" goes through an `LLMProvider` interface. The
@@ -53,7 +56,7 @@ flowchart LR
 |---|---|---|
 | Routers | `backend/app/routers/` | HTTP only: validate input, call a use case, shape the response |
 | Use cases | `backend/app/services/tutor.py` | Submit attempt, diagnose, practice, class overview |
-| Domain | `services/graph.py`, `mastery.py`, `diagnosis.py`, `code_analysis.py` | Pure logic, unit-tested without HTTP |
+| Domain | `services/graph.py`, `mastery.py`, `diagnosis.py`, `learning_path.py`, `code_analysis.py` | Pure logic, unit-tested without HTTP |
 | LLM | `services/llm.py` | `LLMProvider` protocol + `MockLLM` |
 | Data | `models.py`, `seed_data.py` | ORM models; concepts, problems and exercises as seed content |
 
@@ -109,6 +112,7 @@ Configuration (environment variables, see `backend/.env.example`):
 | GET | `/api/students/{id}/mastery` | Mastery per concept |
 | POST | `/api/students/{id}/attempts` | Submit code → findings, score changes, diagnosis |
 | GET | `/api/students/{id}/diagnosis/{concept}` | Current root-cause diagnosis |
+| GET | `/api/students/{id}/learning-path/{concept}` | Ordered study plan with effort estimates |
 | POST | `/api/students/{id}/practice` | Micro exercises for a concept (answers hidden) |
 | POST | `/api/students/{id}/exercises/{ex}/answer` | Check an answer, update mastery |
 | GET | `/api/teacher/overview` | Class-wide root causes and student status |
@@ -116,7 +120,7 @@ Configuration (environment variables, see `backend/.env.example`):
 ## Tests
 
 ```bash
-cd backend && pytest          # 39 tests: graph, analyser rules, mastery, diagnosis, API flows
+cd backend && pytest          # graph, analyser rules, mastery, diagnosis, learning path, API flows
 cd frontend && npm run build  # type-check + production build
 ```
 

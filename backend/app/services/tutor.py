@@ -14,6 +14,7 @@ from . import mastery as m
 from .code_analysis import Finding, ProblemSpec
 from .diagnosis import ConceptState, Diagnosis, confidence_label, diagnose
 from .graph import ConceptGraph
+from .learning_path import build_learning_path
 from .llm import LLMProvider
 
 RECENT_ATTEMPTS = 10
@@ -138,6 +139,20 @@ def diagnosis_report(db: Session, llm: LLMProvider, student_id: int, target_id: 
         "explanation": llm.explain_diagnosis(names[result.target_id], names[result.root_cause_id],
                                              [names[c] for c in result.chain], evidence),
         "evidence": evidence.to_dict() if evidence else None,
+    }
+
+
+def learning_path_report(db: Session, student_id: int, target_id: str) -> dict:
+    result, _ = run_diagnosis(db, student_id, target_id)
+    names = concept_names(db)
+    steps = build_learning_path(load_graph(db), _states(db, student_id), target_id, result.root_cause_id)
+    return {
+        "target": {"id": target_id, "name": names[target_id]},
+        "root_cause": {"id": result.root_cause_id, "name": names[result.root_cause_id]},
+        "total_exercises": sum(step.exercises_needed for step in steps),
+        "steps": [{"concept_id": step.concept_id, "name": names[step.concept_id], "status": step.status,
+                   "score": step.score, "exercises_needed": step.exercises_needed,
+                   "is_root_cause": step.is_root_cause, "is_target": step.is_target} for step in steps],
     }
 
 
