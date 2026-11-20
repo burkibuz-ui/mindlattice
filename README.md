@@ -1,5 +1,7 @@
 # MindLattice
 
+[![CI](https://github.com/burkibuz-ui/mindlattice/actions/workflows/ci.yml/badge.svg)](https://github.com/burkibuz-ui/mindlattice/actions/workflows/ci.yml)
+
 **Find out *why* a student can't learn a topic, not just *that* they can't.**
 
 When a student keeps failing at `for` loops, the problem is often somewhere else: they may not
@@ -30,10 +32,15 @@ Student code ──► misconception ──► knowledge graph ──► root ca
 - **Root-cause diagnosis**: among the weak concepts under the target, pick the most fundamental one
   whose own prerequisites are fine; break ties by misconception frequency. Returns a confidence
   level and "probe" concepts that have no evidence yet.
+- **Personalised learning path**: every concept the target depends on that isn't solid yet, in
+  prerequisite order, with an estimate of how many correct exercises each one needs. The estimate is
+  derived in closed form from the mastery update rule (see `services/learning_path.py`).
 - **Micro exercises** chosen for the root cause; answers update mastery and the diagnosis.
 - **Teacher dashboard**: most common root causes in the class, with per-student status.
 - **Pluggable LLM layer**: everything "intelligent" goes through an `LLMProvider` interface. The
-  default `MockLLM` works offline with no API key; a real model can be plugged in later.
+  default `MockLLM` works offline with no API key. `ClaudeLLM` (`LLM_PROVIDER=claude`) writes the
+  student-facing explanation with Claude, grounded only in the diagnosis and the evidence; finding
+  misconceptions stays deterministic. Any API error falls back to the offline explanation.
 
 ## Architecture
 
@@ -42,7 +49,7 @@ flowchart LR
   UI[React + TypeScript<br/>Vite] -->|REST /api| API[FastAPI routers]
   UI -->|postMessage| W[Web Worker<br/>Pyodide]
   API --> T[tutor service<br/>use cases]
-  T --> LLM[LLMProvider<br/>MockLLM → code_analysis]
+  T --> LLM[LLMProvider<br/>MockLLM / ClaudeLLM]
   T --> D[diagnosis]
   T --> M[mastery]
   D --> G[ConceptGraph]
@@ -53,8 +60,8 @@ flowchart LR
 |---|---|---|
 | Routers | `backend/app/routers/` | HTTP only: validate input, call a use case, shape the response |
 | Use cases | `backend/app/services/tutor.py` | Submit attempt, diagnose, practice, class overview |
-| Domain | `services/graph.py`, `mastery.py`, `diagnosis.py`, `code_analysis.py` | Pure logic, unit-tested without HTTP |
-| LLM | `services/llm.py` | `LLMProvider` protocol + `MockLLM` |
+| Domain | `services/graph.py`, `mastery.py`, `diagnosis.py`, `learning_path.py`, `code_analysis.py` | Pure logic, unit-tested without HTTP |
+| LLM | `services/llm.py` | `LLMProvider` protocol, `MockLLM`, `ClaudeLLM` |
 | Data | `models.py`, `seed_data.py` | ORM models; concepts, problems and exercises as seed content |
 
 ### Design decisions
@@ -95,7 +102,9 @@ Configuration (environment variables, see `backend/.env.example`):
 | Variable | Default | |
 |---|---|---|
 | `DATABASE_URL` | `sqlite:///./mindlattice.db` | Any SQLAlchemy URL, e.g. PostgreSQL |
-| `LLM_PROVIDER` | `mock` | LLM implementation |
+| `LLM_PROVIDER` | `mock` | `mock` (offline) or `claude` |
+| `ANTHROPIC_API_KEY` | | Required when `LLM_PROVIDER=claude` |
+| `ANTHROPIC_MODEL` | `claude-sonnet-5-5` | Model used for explanations |
 | `SEED_DEMO_DATA` | `true` | Create the demo class |
 | `CORS_ORIGINS` | `http://localhost:5173` | Comma-separated |
 
@@ -109,6 +118,7 @@ Configuration (environment variables, see `backend/.env.example`):
 | GET | `/api/students/{id}/mastery` | Mastery per concept |
 | POST | `/api/students/{id}/attempts` | Submit code → findings, score changes, diagnosis |
 | GET | `/api/students/{id}/diagnosis/{concept}` | Current root-cause diagnosis |
+| GET | `/api/students/{id}/learning-path/{concept}` | Ordered study plan with effort estimates |
 | POST | `/api/students/{id}/practice` | Micro exercises for a concept (answers hidden) |
 | POST | `/api/students/{id}/exercises/{ex}/answer` | Check an answer, update mastery |
 | GET | `/api/teacher/overview` | Class-wide root causes and student status |
@@ -116,13 +126,14 @@ Configuration (environment variables, see `backend/.env.example`):
 ## Tests
 
 ```bash
-cd backend && pytest          # 39 tests: graph, analyser rules, mastery, diagnosis, API flows
+cd backend && pytest          # graph, analyser rules, mastery, diagnosis, learning path, API flows
 cd frontend && npm run build  # type-check + production build
 ```
 
 ## Roadmap
 
-- [ ] Real LLM provider (Claude or OpenAI) for subtler misconceptions and generated exercises
+- [x] Real LLM provider (Claude) for explanations, with offline fallback
+- [ ] Use the LLM for subtler misconceptions and generated exercises
 - [ ] Probe questions: ask about untested prerequisites before committing to a diagnosis
 - [ ] Learn edge weights from data ("students weak in X are usually weak in Y")
 - [ ] Spaced repetition for mastered concepts

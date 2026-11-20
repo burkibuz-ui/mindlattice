@@ -93,6 +93,23 @@ class AttemptResultOut(BaseModel):
     diagnosis: DiagnosisOut
 
 
+class PathStepOut(BaseModel):
+    concept_id: str
+    name: str
+    status: str  # weak | untested | practicing | mastered
+    score: float | None
+    exercises_needed: int
+    is_root_cause: bool
+    is_target: bool
+
+
+class LearningPathOut(BaseModel):
+    target: "NamedRef"
+    root_cause: "NamedRef"
+    total_exercises: int
+    steps: list[PathStepOut]
+
+
 class ExerciseOut(ORM):
     """Sent to the student: no answer, no explanation."""
 
@@ -143,3 +160,6 @@ class RootCauseCount(BaseModel):
 class ClassOverviewOut(BaseModel):
     students: list[StudentRow]
     root_causes: list[RootCauseCount]
+
+
+LearningPathOut.model_rebuild()

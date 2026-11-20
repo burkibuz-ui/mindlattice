@@ -12,6 +12,8 @@ def _split(value: str) -> list[str]:
 class Settings:
     database_url: str = "sqlite:///./mindlattice.db"
     llm_provider: str = "mock"
+    anthropic_api_key: str = ""
+    anthropic_model: str = "claude-sonnet-5-5"
     seed_demo_data: bool = True
     cors_origins: list[str] = field(default_factory=lambda: ["http://localhost:5173"])
 
@@ -20,6 +22,8 @@ def get_settings() -> Settings:
     return Settings(
         database_url=os.getenv("DATABASE_URL", "sqlite:///./mindlattice.db"),
         llm_provider=os.getenv("LLM_PROVIDER", "mock"),
+        anthropic_api_key=os.getenv("ANTHROPIC_API_KEY", ""),
+        anthropic_model=os.getenv("ANTHROPIC_MODEL", "claude-sonnet-5-5"),
         seed_demo_data=os.getenv("SEED_DEMO_DATA", "true").lower() == "true",
         cors_origins=_split(os.getenv("CORS_ORIGINS", "http://localhost:5173")),
     )
